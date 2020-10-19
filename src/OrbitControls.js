@@ -605,7 +605,8 @@ var OrbitControls = function ( object, domElement ) {
 				pan( - scope.keyPanSpeed, 0 );
 				needsUpdate = true;
 				break;
-
+			default:
+				break;
 		}
 
 		if ( needsUpdate ) {
@@ -622,7 +623,7 @@ var OrbitControls = function ( object, domElement ) {
 
 	function handleTouchStartRotate( event ) {
 
-		if ( event.touches.length == 1 ) {
+		if ( event.touches.length === 1 ) {
 
 			rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
@@ -639,7 +640,7 @@ var OrbitControls = function ( object, domElement ) {
 
 	function handleTouchStartPan( event ) {
 
-		if ( event.touches.length == 1 ) {
+		if ( event.touches.length === 1 ) {
 
 			panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
@@ -683,7 +684,7 @@ var OrbitControls = function ( object, domElement ) {
 
 	function handleTouchMoveRotate( event ) {
 
-		if ( event.touches.length == 1 ) {
+		if ( event.touches.length === 1 ) {
 
 			rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
@@ -710,7 +711,7 @@ var OrbitControls = function ( object, domElement ) {
 
 	function handleTouchMovePan( event ) {
 
-		if ( event.touches.length == 1 ) {
+		if ( event.touches.length === 1 ) {
 
 			panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
@@ -784,9 +785,8 @@ var OrbitControls = function ( object, domElement ) {
 			case 'pen':
 				onMouseDown( event );
 				break;
-
-			// TODO touch
-
+			default:
+				// TODO touch
 		}
 
 	}
@@ -801,7 +801,7 @@ var OrbitControls = function ( object, domElement ) {
 			case 'pen':
 				onMouseMove( event );
 				break;
-
+			default:
 			// TODO touch
 
 		}
@@ -818,7 +818,7 @@ var OrbitControls = function ( object, domElement ) {
 			case 'pen':
 				onMouseUp( event );
 				break;
-
+			default:	
 			// TODO touch
 
 		}
@@ -964,7 +964,7 @@ var OrbitControls = function ( object, domElement ) {
 				handleMouseMovePan( event );
 
 				break;
-
+			default:
 		}
 
 	}
