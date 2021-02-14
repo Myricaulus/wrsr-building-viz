@@ -22,6 +22,9 @@ const scene = new THREE.Scene();
 let line_z = 0.01;
 let increase_line_z = false;
 let group = new THREE.Group();
+let connection_space = 3;
+let vehicle_space = 1.5;
+let pedestrian_space = 1;
 
 interface IMeshColor {
 	Color: string;
@@ -47,6 +50,10 @@ enum MeshColors {
 	VehiclePathPID = 0xffffff,
 	VehiclePathDetour = 0xaa00aa,
 	VehiclePathExit = 0xff00ff,
+	ConnectionConveyorInput = 0xffa500,
+	ConnectionConveyorOutput = 0xaa7500,
+	ConnectionBulkInput = 0xffffff,
+	ConnectionBulkOutput = 0xaaaaaa,
 }
 
 
@@ -146,10 +153,10 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -169,10 +176,10 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -204,10 +211,10 @@ function parseEditor() {
 				let y2 = +res_viz_2[2];
 				let planeGeo;
 				if (x1 === x2) {
-					planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+					planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 				}
 				else if (y1 === y2) {
-					planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+					planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 				}
 				else {
 					planeGeo = drawSquare(x1, y1, x2, y2);
@@ -230,10 +237,10 @@ function parseEditor() {
 				let y2 = +res_viz_2[2];
 				let planeGeo;
 				if (x1 === x2) {
-					planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+					planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 				}
 				else if (y1 === y2) {
-					planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+					planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 				}
 				else {
 					planeGeo = drawSquare(x1, y1, x2, y2);
@@ -280,10 +287,10 @@ function parseEditor() {
 			}
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -304,16 +311,86 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 2, y1, x1 + 2, y2);
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 2, x2, y2 + 2);
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
 			}
 			let planematerial = new THREE.MeshBasicMaterial({ color: MeshColors.ConnectionFactory, side: THREE.DoubleSide });
 			let plane = new THREE.Mesh(planeGeo, planematerial);
+			group.add(plane);
+		}
+		// CONNECTION_CONVEYOR
+		res_viz = node.match(/^CONNECTION_CONVEYOR(_INPUT|_OUTPUT)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+/i)
+		if (res_viz) {
+			let x1 = +res_viz[2];
+			let z1 = +res_viz[3];
+			let y1 = +res_viz[4];
+			let x2 = +res_viz[5];
+			//let z2 = +res_viz[5];
+			let y2 = +res_viz[7];
+			let convColor = MeshColors.ConnectionConveyorInput;
+			switch (res_viz[1]) {
+				case "_INPUT":
+					convColor = MeshColors.ConnectionConveyorInput;
+					break;
+				case "_OUTPUT":
+					convColor = MeshColors.ConnectionConveyorOutput;
+					break;
+				default:
+					break;
+			}
+			let planeGeo;
+			if (x1 === x2) {
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
+			}
+			else if (y1 === y2) {
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
+			}
+			else {
+				planeGeo = drawSquare(x1, y1, x2, y2);
+			}
+			let planematerial = new THREE.MeshBasicMaterial({ color: convColor, side: THREE.DoubleSide });
+			let plane = new THREE.Mesh(planeGeo, planematerial);
+			plane.position.z = z1;
+			group.add(plane);
+		}
+		// CONNECTION_BULK
+		res_viz = node.match(/^CONNECTION_BULK(_INPUT|_OUTPUT)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+/i)
+		if (res_viz) {
+			let x1 = +res_viz[2];
+			let z1 = +res_viz[3];
+			let y1 = +res_viz[4];
+			let x2 = +res_viz[5];
+			//let z2 = +res_viz[5];
+			let y2 = +res_viz[7];
+			let convColor = MeshColors.ConnectionBulkInput;
+			switch (res_viz[1]) {
+				case "_INPUT":
+					convColor = MeshColors.ConnectionBulkInput;
+					break;
+				case "_OUTPUT":
+					convColor = MeshColors.ConnectionBulkOutput;
+					break;
+				default:
+					break;
+			}
+			let planeGeo;
+			if (x1 === x2) {
+				planeGeo = drawSquare(x1 - connection_space, y1, x1 + connection_space, y2);
+			}
+			else if (y1 === y2) {
+				planeGeo = drawSquare(x1, y1 - connection_space, x2, y2 + connection_space);
+			}
+			else {
+				planeGeo = drawSquare(x1, y1, x2, y2);
+			}
+			let planematerial = new THREE.MeshBasicMaterial({ color: convColor, side: THREE.DoubleSide });
+			let plane = new THREE.Mesh(planeGeo, planematerial);
+			plane.position.z = z1;
 			group.add(plane);
 		}
 		// CONNECTION_PEDESTRIAN
@@ -326,10 +403,10 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 0.25, y1, x1 + 0.25, y2);
+				planeGeo = drawSquare(x1 - pedestrian_space, y1, x1 + pedestrian_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 0.25, x2, y2 + 0.25);
+				planeGeo = drawSquare(x1, y1 - pedestrian_space, x2, y2 + pedestrian_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -349,10 +426,10 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 1, y1, x1 + 1, y2);
+				planeGeo = drawSquare(x1 - vehicle_space, y1, x1 + vehicle_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 1, x2, y2 + 1);
+				planeGeo = drawSquare(x1, y1 - vehicle_space, x2, y2 + vehicle_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -378,10 +455,10 @@ function parseEditor() {
 
 			let planeGeo;
 			if (x1 === x2) {
-				planeGeo = drawSquare(x1 - 1, y1, x1 + 1, y2);
+				planeGeo = drawSquare(x1 - vehicle_space, y1, x1 + vehicle_space, y2);
 			}
 			else if (y1 === y2) {
-				planeGeo = drawSquare(x1, y1 - 1, x2, y2 + 1);
+				planeGeo = drawSquare(x1, y1 - vehicle_space, x2, y2 + vehicle_space);
 			}
 			else {
 				planeGeo = drawSquare(x1, y1, x2, y2);
@@ -454,8 +531,11 @@ function parseEditor() {
 				detour_points_pid = vehicle_stations;
 			drawDPLines(detour_points_pid, detour_points, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathDetour }));
 		} else {
-			drawLines(vehicle_stations, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathExit }));
-			drawLines(detour_points_pid, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathExit }));
+			if (detour_points_pid.length)
+				drawLines(detour_points_pid, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathExit }));
+			else
+				drawLines(vehicle_stations, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathExit }));
+
 		}
 	} else
 		drawLines(vehicle_stations_turning_points, exit_points, new THREE.LineBasicMaterial({ color: MeshColors.VehiclePathExit }));
@@ -541,13 +621,17 @@ function drawLinesWithPIDinEnds(starts: any[], ends: any[], material: THREE.Line
 	for (let index = 0; index < ends.length; index++) {
 		const start_index = ends[index][2];
 		let points = [];
-		points.push(new THREE.Vector3(starts[start_index][0], starts[start_index][1], line_z));
-		points.push(new THREE.Vector3(ends[index][0], ends[index][1], line_z));
-		let geometry = new THREE.BufferGeometry().setFromPoints(points);
-		if (increase_line_z)
-			line_z++
-		let line = new THREE.Line(geometry, material);
-		group.add(line);
+		try {
+			points.push(new THREE.Vector3(starts[start_index][0], starts[start_index][1], line_z));
+			points.push(new THREE.Vector3(ends[index][0], ends[index][1], line_z));
+			let geometry = new THREE.BufferGeometry().setFromPoints(points);
+			if (increase_line_z)
+				line_z++
+			let line = new THREE.Line(geometry, material);
+			group.add(line);
+		} catch (error) {
+			let bla = ""
+		}
 	}
 }
 
