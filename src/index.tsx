@@ -631,6 +631,7 @@ function drawLinesWithPIDinEnds(starts: any[], ends: any[], material: THREE.Line
 			group.add(line);
 		} catch (error) {
 			let bla = ""
+			bla = bla + "Go Away Warning, i still want to make a breakpoint here, thats why this bla is there!"
 		}
 	}
 }
